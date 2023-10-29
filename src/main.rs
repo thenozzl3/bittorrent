@@ -17,14 +17,11 @@ fn decode_bencoded_value(encoded_value: &str) -> serde_json::Value {
     } else {
         //i guess it's an int of a float or whatever..
         let len = encoded_value.len();
-
         match  first_char {
           'i' => serde_json::Value::Number(encoded_value[1..len-1].parse::<i64>().unwrap().into()),
           _ => panic!("Unhandled encoded value: {}", encoded_value)
 
-
         }
-
     }
 }
 

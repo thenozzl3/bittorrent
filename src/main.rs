@@ -1,4 +1,3 @@
-use serde_json;
 use std::env;
 
 // Available if you need it!
@@ -6,7 +5,7 @@ use std::env;
 #[allow(dead_code)]
 fn decode_bencoded_value(encoded_value: &str) -> serde_json::Value {
     // If encoded_value starts with a digit, it's a number
-    let first_char: char = encoded_value.chars().next().unwrap(); 
+    let first_char: char = encoded_value.chars().next().unwrap();
     if first_char.is_digit(10) {
         // Example: "5:hello" -> "hello"
         let colon_index = encoded_value.find(':').unwrap();
@@ -17,12 +16,11 @@ fn decode_bencoded_value(encoded_value: &str) -> serde_json::Value {
     }
     //i guess it's an int of a float or whatever..
     let len = encoded_value.len();
-    match  first_char {
-      'i' => serde_json::Value::Number(encoded_value[1..len-1].parse::<i64>().unwrap().into()),
-      _ => panic!("Unhandled encoded value: {}", encoded_value)
+    match first_char {
+        'i' => serde_json::Value::Number(encoded_value[1..len - 1].parse::<i64>().unwrap().into()),
+        _ => panic!("Unhandled encoded value: {}", encoded_value),
     }
- }
-
+}
 
 // Usage: your_bittorrent.sh decode "<encoded_value>"
 fn main() {

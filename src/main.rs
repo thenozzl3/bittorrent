@@ -5,6 +5,7 @@ use std::env;
 // use serde_bencode
 //
 //
+//
 
 #[allow(dead_code)]
 fn decode_bencoded_value(encoded_value: &str) {
@@ -12,7 +13,7 @@ fn decode_bencoded_value(encoded_value: &str) {
     let mut current_chunk: String = String::new();
     let mut current_pos = 0;
     let mut current_chunk_pos = 0;
-
+    let mut braces: Vec<char> = vec![];
     let mut enc_iter = encoded_value.chars().peekable();
 
     //enter the state machine
@@ -29,32 +30,50 @@ fn decode_bencoded_value(encoded_value: &str) {
                 enc_iter.next();
             }
 
-            let string_length:i64 = current_chunk.parse::<i64>().unwrap().into();
+            let string_length: i64 = current_chunk.parse::<i64>().unwrap().into();
             enc_iter.next();
-            current_pos += current_chunk_pos + 1 ;
-            print!("\"{}\"", &encoded_value[current_pos..(current_pos + string_length as usize)]);
-            current_pos += string_length  as usize  ;
+            current_pos += current_chunk_pos + 1;
+            print!(
+                "\"{}\"",
+                &encoded_value[current_pos..(current_pos + string_length as usize)]
+            );
+            current_pos += string_length as usize;
             //advance the iterator the length of the string ..
-            enc_iter.nth(string_length as usize -1);
+            enc_iter.nth(string_length as usize - 1);
             current_chunk.clear();
-
         } else {
             match current_char {
                 'l' => {
+                    braces.push('[');
                     print!("[");
                     current_pos += 1;
-                   // current_chunk_pos = 0;
+                    // current_chunk_pos = 0;
+                    continue;
+                }
+                'd' => {
+                    braces.push('{');
+                    print!("{{");
+                    current_pos += 1;
+                    // current_chunk_pos = 0;
                     continue;
                 }
                 'e' => {
-                    print!("]");
+                    //print the closing brace - depending
+                    //which one we saw last
+                    if let Some(brace) = braces.pop() {
+                        match brace {
+                            '[' => print!("]"),
+                            '{' => print!("}}"),
+                            _ => (),
+                        }
+                    }
                     current_pos += 1;
                 }
                 'i' => {
                     while let Some(stuff) = enc_iter.peek() {
                         current_pos += 1;
                         if *stuff == 'e' {
-                            print!("{}",current_chunk);
+                            print!("{}", current_chunk);
                             current_chunk.clear();
                             enc_iter.next();
                             current_chunk_pos += 1;
@@ -63,15 +82,19 @@ fn decode_bencoded_value(encoded_value: &str) {
                         current_chunk.push_str(&*stuff.to_string());
                         enc_iter.next();
                     }
-                    current_pos += current_chunk_pos ;
+                    current_pos += current_chunk_pos;
                 }
                 _ => (),
             }
         }
         current_chunk_pos = 0;
-        if let Some(stuff) = enc_iter.peek(){
+        if let Some(stuff) = enc_iter.peek() {
             if *stuff != 'e' {
-              print!(",");
+                if let Some('{') = braces.last() {
+                    print!(":");
+                } else {
+                    print!(",");
+                }
             }
         }
     }

@@ -91,7 +91,8 @@ fn decode_bencoded_value(encoded_value: &str) {
         current_chunk_pos = 0;
         if let Some(stuff) = enc_iter.peek() {
             if *stuff != 'e' {
-                match braces.last().unwrap() {
+                if let Some(brace) =  braces.last() {
+                    match brace {
                     '{' => {
                         print!(":");
                         braces.push(':'); },
@@ -105,7 +106,7 @@ fn decode_bencoded_value(encoded_value: &str) {
                 }
             }
         }
-    }
+    }}
     println!();
     ()
 }

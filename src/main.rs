@@ -147,8 +147,8 @@ fn main() {
               decode_bencoded_value(&content, &mut json_string);
               //println!("{}", json_string);
               let metadata : Value = serde_json::from_str(&json_string).unwrap();
-              println!("Tracker URL: {}", metadata["announce"]);
-     //         println!("Lenght: {}", metadata["info"]["length"]);
+              println!("Tracker URL: {}", metadata["announce"].as_str().unwrap());
+              println!("Lenght: {}", metadata["info"]["length"]);
             }
         }
         _ => println!("unknown command: {}", args[1]),

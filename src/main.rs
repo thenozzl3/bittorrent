@@ -139,7 +139,7 @@ fn main() {
             // Uncomment this block to pass the first stage
             let encoded_value = args[2].as_bytes();
             decode_bencoded_value(encoded_value, &mut json_string);
-            println!("{}", json_string);
+            println!("{}", json_string.trim());
         }
         "info" => {
             if let Ok(content) = std::fs::read(&args[2]){

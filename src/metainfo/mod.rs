@@ -15,10 +15,10 @@ pub struct MetaInfo {
 impl MetaInfo {
    pub fn from_string(bytes: &[u8]) -> Option<Self> {
      let (obj, rest) = decode_bencoded_value_with_rest(bytes)?;
-     /*if ! std::str::from_utf8(rest).ok()?.trim().is_empty(){
+     if ! std::str::from_utf8(rest).ok()?.trim().is_empty(){
        println!("not empty");
        return None;
-     }*/
+     }
 
      let dict = obj.to_map()?;
      let announce = dict.get("announce")?.to_str()?;

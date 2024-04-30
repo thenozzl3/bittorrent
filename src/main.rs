@@ -30,8 +30,8 @@ fn main() {
                     meta_info.announce,
                     meta_info.length,
                 );*/
-                println!(
-                    "Info Hash: {}\n",
+                print!(
+                    "Info Hash: {}",
                     meta_info.info_hash.encode_hex::<String>(),
                 );
             } else {

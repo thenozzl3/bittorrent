@@ -25,10 +25,10 @@ fn main() {
         if let Ok(contents) = std::fs::read(&args[2]) {
             if let Some(meta_info) = MetaInfo::from_string(&contents) {
                 println!(
-                    "Tracker URL: {}\nLength: {}\nInfo Hash: {}",
+                    "Info Hash: {}\nTracker URL: {}\nLength: {}\n",
+                    meta_info.info_hash.encode_hex::<String>(),
                     meta_info.announce,
                     meta_info.length,
-                    meta_info.info_hash.encode_hex::<String>()
                 );
             } else {
                 panic!("bad file 1");

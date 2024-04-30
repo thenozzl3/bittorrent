@@ -1,8 +1,10 @@
+mod bencode_parser;
+mod metainfo;
+
 use std::env;
 
-extern crate bittorrent_starter_rust;
-
-use bittorrent_starter_rust::{bencode_parser::decode_bencoded_value,MetaInfo}  ;
+use crate::bencode_parser::decode_bencoded_value;
+use crate::metainfo::MetaInfo;
 use hex::ToHex;
 
 fn main() {

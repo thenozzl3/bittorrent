@@ -24,11 +24,15 @@ fn main() {
     } else if command == "info" {
         if let Ok(contents) = std::fs::read(&args[2]) {
             if let Some(meta_info) = MetaInfo::from_string(&contents) {
-                println!(
+               /* println!(
                     "Info Hash: {}\nTracker URL: {}\nLength: {}\n",
                     meta_info.info_hash.encode_hex::<String>(),
                     meta_info.announce,
                     meta_info.length,
+                );*/
+                println!(
+                    "Info Hash: {}\n",
+                    meta_info.info_hash.encode_hex::<String>(),
                 );
             } else {
                 panic!("bad file 1");

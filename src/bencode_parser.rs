@@ -1,4 +1,5 @@
 use std::{collections::BTreeMap, iter};
+//use std::iter;
 use std::{collections::HashMap, str::from_utf8};
 
 const BENCODE_END_DELIMITER: u8 = 101; //e
@@ -21,8 +22,8 @@ pub enum BencodeValue<'a> {
     Bytes(&'a [u8]),
     Integer(i64),
     List(Vec<BencodeValue<'a>>),
-    Dictionary(HashMap<&'a str, BencodeValue<'a>>),
-    // Dictionary(BTreeMap<&'a str, BencodeValue<'a>>),
+    //Dictionary(HashMap<&'a str, BencodeValue<'a>>),
+    Dictionary(BTreeMap<&'a str, BencodeValue<'a>>),
 }
 
 impl<'a> BencodeValue<'a> {
@@ -113,7 +114,7 @@ impl<'a> BencodeValue<'a> {
         }
     }
 
-    pub fn to_map(&self) -> Option<&HashMap<&str, BencodeValue>> {
+    pub fn to_map(&self) -> Option<&BTreeMap<&str, BencodeValue>> {
         if let BencodeValue::Dictionary(dict) = self {
             Some(dict)
         } else {
@@ -188,7 +189,6 @@ fn decode_multiple<'a, F: FnMut(&'a [u8]) -> Option<&'a [u8]>>(
 }
 
 fn decode_bencoded_list(encoded_value: &[u8]) -> Option<ParsingResult> {
-    println!("decoding list");
     let mut list: Vec<BencodeValue> = Vec::new();
     let rest = decode_multiple(encoded_value, |elements: &[u8]| {
         let (element, rest) = decode_bencoded_value_with_rest(elements)?;
@@ -199,7 +199,7 @@ fn decode_bencoded_list(encoded_value: &[u8]) -> Option<ParsingResult> {
 }
 
 fn decode_bencoded_dictionary(encoded_value: &[u8]) -> Option<ParsingResult> {
-    let mut dict: HashMap<&str, BencodeValue> = HashMap::new();
+    let mut dict: BTreeMap<&str, BencodeValue> = BTreeMap::new();
 
     let rest = decode_multiple(encoded_value, |elements: &[u8]| {
         if let (BencodeValue::String(key), rest) = decode_bencoded_string(elements)? {
@@ -229,6 +229,6 @@ pub fn decode_bencoded_value(encoded_value: &[u8]) -> Option<BencodeValue> {
     if rest.is_empty() {
       Some(value)
     }else{
-       None
+      None
     }
 }

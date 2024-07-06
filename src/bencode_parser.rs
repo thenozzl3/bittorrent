@@ -22,7 +22,6 @@ pub enum BencodeValue<'a> {
     Bytes(&'a [u8]),
     Integer(i64),
     List(Vec<BencodeValue<'a>>),
-    //Dictionary(HashMap<&'a str, BencodeValue<'a>>),
     Dictionary(BTreeMap<&'a str, BencodeValue<'a>>),
 }
 

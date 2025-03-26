@@ -1,6 +1,4 @@
-use std::{collections::BTreeMap, iter};
-//use std::iter;
-use std::{collections::HashMap, str::from_utf8};
+use std::{collections::BTreeMap, iter,str::from_utf8};
 
 const BENCODE_END_DELIMITER: u8 = 101; //e
 const BENCODE_INTEGER_START: u8 = 105; //i
@@ -155,6 +153,7 @@ fn decode_bencoded_string(encoded_value: &[u8]) -> Option<ParsingResult> {
         .ok()?;
     let bytes = &encoded_value[colon_index + 1..colon_index + 1 + number as usize];
     let rest = &encoded_value[colon_index + 1 + number as usize..];
+    println!("rest: {:?}",rest);
     if let Ok(string) = from_utf8(bytes) {
         Some((BencodeValue::String(string), rest))
     } else {
@@ -173,6 +172,7 @@ fn decode_multiple<'a, F: FnMut(&'a [u8]) -> Option<&'a [u8]>>(
     encoded_value: &'a [u8],
     mut parse: F,
 ) -> Option<&'a [u8]> {
+    println!("decode_multiple");
     let mut elements = &encoded_value[1..];
     while !elements.is_empty() {
         if let Some(rest) = parse(elements) {
@@ -188,6 +188,7 @@ fn decode_multiple<'a, F: FnMut(&'a [u8]) -> Option<&'a [u8]>>(
 }
 
 fn decode_bencoded_list(encoded_value: &[u8]) -> Option<ParsingResult> {
+    println!("decode list");
     let mut list: Vec<BencodeValue> = Vec::new();
     let rest = decode_multiple(encoded_value, |elements: &[u8]| {
         let (element, rest) = decode_bencoded_value_with_rest(elements)?;
@@ -198,6 +199,7 @@ fn decode_bencoded_list(encoded_value: &[u8]) -> Option<ParsingResult> {
 }
 
 fn decode_bencoded_dictionary(encoded_value: &[u8]) -> Option<ParsingResult> {
+    println!("decode dict");
     let mut dict: BTreeMap<&str, BencodeValue> = BTreeMap::new();
 
     let rest = decode_multiple(encoded_value, |elements: &[u8]| {
@@ -215,6 +217,7 @@ fn decode_bencoded_dictionary(encoded_value: &[u8]) -> Option<ParsingResult> {
 }
 
 pub fn decode_bencoded_value_with_rest(encoded_value: &[u8]) -> Option<ParsingResult> {
+    println!("value_with_rest {:?}", encoded_value);
     match find_bencode_type(encoded_value)? {
         BencodeType::Integer => decode_bencoded_integer(encoded_value),
         BencodeType::String => decode_bencoded_string(encoded_value),
@@ -224,10 +227,11 @@ pub fn decode_bencoded_value_with_rest(encoded_value: &[u8]) -> Option<ParsingRe
 }
 
 pub fn decode_bencoded_value(encoded_value: &[u8]) -> Option<BencodeValue> {
+    println!("value");
     let (value, rest) = decode_bencoded_value_with_rest(encoded_value)?;
     if rest.is_empty() {
-      Some(value)
-    }else{
-      None
+        Some(value)
+    } else {
+        None
     }
 }

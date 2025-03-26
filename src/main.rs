@@ -8,35 +8,45 @@ use crate::metainfo::MetaInfo;
 use hex::ToHex;
 
 fn main() {
-    let mut args: Vec<String> = env::args().collect();
-    args.push("info".to_string());
-    args.push("sample.torrent".to_string());
+    let args: Vec<String> = env::args().collect();
     let command = &args[1];
-    if command == "decode" {
-        let encoded_value = &args[2];
-        let decoded_value = decode_bencoded_value(encoded_value.as_bytes());
+    match command.as_str() {
+        "decode" => {
+            let encoded_value = &args[2];
+            let decoded_value = decode_bencoded_value(encoded_value.as_bytes());
 
-        if let Some(val) = decoded_value {
-            println!("{}", val.to_json());
-        } else {
-            panic!("poop")
-        }
-    } else if command == "info" {
-        if let Ok(contents) = std::fs::read(&args[2]) {
-            if let Some(meta_info) = MetaInfo::from_string(&contents) {
-                println!(
-                    "Info Hash: {}\nTracker URL: {}\nLength: {}\n",
-                    meta_info.info_hash.encode_hex::<String>(),
-                    meta_info.announce,
-                    meta_info.length,
-                );
+            if let Some(val) = decoded_value {
+                println!("{}", val.to_json());
             } else {
-                panic!("bad file 1");
+                panic!("poop")
             }
-        } else {
-            panic!("file not found");
         }
-    } else {
-        println!("unknown command");
+        "info" => {
+            if let Ok(contents) = std::fs::read(&args[2]) {
+                if let Some(meta_info) = MetaInfo::from_string(&contents) {
+                    println!(
+                        "Info Hash: {}\nTracker URL: {}\nLength: {}\n",
+                        meta_info.info_hash.encode_hex::<String>(),
+                        meta_info.announce,
+                        meta_info.length,
+                    );
+                    println!("pieces: ... \n");
+                    let mut byte_count = 0;
+                    for piece in meta_info.pieces.iter() {
+                        byte_count += 1;
+                        print!("{:02x}", piece);
+                        if byte_count % 20 == 0 {println!("");}
+                    }
+                } else {
+                    panic!("bad file 1");
+                }
+            } else {
+            panic!("file not found");
+            }
+        }
+        _ => {
+            println!("unknown command");
+        }
     }
 }
+

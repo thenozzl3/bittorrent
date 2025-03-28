@@ -103,6 +103,7 @@ impl<'a> BencodeValue<'a> {
             None
         }
     }
+/*
     pub fn to_array(&self) -> Option<&[BencodeValue]> {
         if let BencodeValue::List(vec) = self {
             Some(vec)
@@ -110,7 +111,7 @@ impl<'a> BencodeValue<'a> {
             None
         }
     }
-
+*/
     pub fn to_map(&self) -> Option<&BTreeMap<&str, BencodeValue>> {
         if let BencodeValue::Dictionary(dict) = self {
             Some(dict)

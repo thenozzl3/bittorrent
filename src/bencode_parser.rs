@@ -41,6 +41,7 @@ impl<'a> BencodeValue<'a> {
             }
         }
     }
+
     pub fn to_bencode(&self) -> Vec<u8> {
         fn str_to_bencode(string: &str) -> String {
             format!("{}:{string}", string.len())
@@ -135,7 +136,7 @@ fn find_bencode_type(value: &[u8]) -> Option<BencodeType> {
         None
     }
 }
-
+//this is some bullshit`
 type ParsingResult<'a> = (BencodeValue<'a>, &'a [u8]);
 
 fn find(bytes: &[u8], delimiter: &u8) -> Option<usize> {
@@ -176,6 +177,7 @@ fn decode_multiple<'a, F: FnMut(&'a [u8]) -> Option<&'a [u8]>>(
     println!("decode_multiple");
     let mut elements = &encoded_value[1..];
     while !elements.is_empty() {
+
         if let Some(rest) = parse(elements) {
             elements = rest;
         } else if *elements.iter().next().unwrap() == BENCODE_END_DELIMITER {

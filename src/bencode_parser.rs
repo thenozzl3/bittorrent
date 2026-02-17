@@ -125,6 +125,7 @@ impl<'a> BencodeValue<'a> {
 fn find_bencode_type(value: &[u8]) -> Option<BencodeType> {
     let first_char = value.iter().next()?;
     if first_char.is_ascii_digit() {
+        println!("string");
         Some(BencodeType::String)
     } else if *first_char == BENCODE_INTEGER_START {
         Some(BencodeType::Integer)
@@ -230,7 +231,6 @@ pub fn decode_bencoded_value_with_rest(encoded_value: &[u8]) -> Option<ParsingRe
 }
 
 pub fn decode_bencoded_value(encoded_value: &[u8]) -> Option<BencodeValue> {
-    println!("value");
     let (value, rest) = decode_bencoded_value_with_rest(encoded_value)?;
     if rest.is_empty() {
         Some(value)
